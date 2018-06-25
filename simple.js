@@ -1,3 +1,4 @@
+import config from "/config.js";
 import "/simple/css/css.js";
 import View, { el, div } from "/simple/View/View.js";
 import { test, assert } from "/simple/Test/Test.js";
@@ -6,7 +7,6 @@ import Page from "/simple/Page/Page.js";
 import Base from "/simple/Base/Base.js";
 import Pager from "/simple/View/Pager/Pager.js";
 
-console.log(Pager);
 const stylesheet = View.stylesheet;
 const write = View.write;
 

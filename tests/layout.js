@@ -13,5 +13,5 @@ export default function(){
 				c: "c"
 			})
 		}
-	}).addClass("light wires");
+	}).addClass("light");
 }

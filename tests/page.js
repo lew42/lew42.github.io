@@ -42,7 +42,12 @@ function content(page_view){
 	pager.add({
 		one: 1,
 		two: true,
-		three: "three"
+		three: "three",
+		four(page){
+			page.addClass("wrap");
+			page.append("hello world");
+		},
+		five: div(".page.wrap", "test")
 	})
 
 }
