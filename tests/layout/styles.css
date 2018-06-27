@@ -1,0 +1,7 @@
+.test1 > .content { border: none; padding: 0; }
+.test1 > .bar { margin-bottom: 1em; }
+
+.section1 { padding:3em; }
+.section1.pad-rem { padding: 3rem; }
+.section1.bg1 {background: hsl(247, 20%, 41%);color: white;}
+.section1 > .grid { max-width: 80em; }
