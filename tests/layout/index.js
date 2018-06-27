@@ -3,11 +3,14 @@ simple.stylesheet("/tests/layout/styles.css");
 
 test("test1", t=> {
 	div(".section1.bg1", d => {
-		div(".grid.two.centered", { left(){
+		div(".r.grid.two.centered", { left(){
+			this.addClass("box1")
 			h1().filler("1s");
 			p().filler("2-4s");
 		}, right(){
-			this.addClass("img-placeholder order1").css("height", "15em");
+			this.addClass("img-placeholder")
+				.css("height", "15em")
+				// .css("margin-bottom", "1em")
 		}});
 	});
 });

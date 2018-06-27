@@ -1,7 +1,22 @@
+@import url('https://fonts.googleapis.com/css?family=Merriweather:900|Open+Sans');
+
+.fonts {
+	font-family: 'Open Sans', sans-serif;
+	font-family: 'Merriweather', serif;
+}
+
 .test1 > .content { border: none; padding: 0; }
 .test1 > .bar { margin-bottom: 1em; }
 
 .section1 { padding:3em; }
+.box1.left {}
+body.sm .box1.left {}
+.box1 h1 { font-family: 'Merriweather', sans-serif; }
+.box1 { font-family: "Open Sans", sans-serif; }
 .section1.pad-rem { padding: 3rem; }
 .section1.bg1 {background: hsl(247, 20%, 41%);color: white;}
 .section1 > .grid { max-width: 80em; }
+
+body..section1 > .grid > .right {
+
+}
