@@ -44,7 +44,7 @@ function content(page_view){
 		two: true,
 		three: "three",
 		four(page){
-			page.addClass("wrap");
+			this.addClass("wrap");
 			page.append("hello world");
 		},
 		five: div(".page.wrap", "test")
