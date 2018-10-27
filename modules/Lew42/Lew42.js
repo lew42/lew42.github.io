@@ -45,7 +45,7 @@ export default class Lew42 extends Site {
 	}
 
 	header(lew42, view){
-		div("logo").addClass("lew42-logo");
+		div("lew42").addClass("lew42-logo");
 		el("nav", {
 			one: "one",
 			two: "two",
