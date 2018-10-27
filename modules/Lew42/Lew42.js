@@ -1,35 +1,71 @@
-import Site from "/simple/Site/Site.js";
+import Site, { el, div } from "/simple/Site/Site.js";
+import responsive from "/modules/responsive/responsive.js";
+
 
 export default class Lew42 extends Site {
 
-	initialize(){
-		this.render(); // auto render?
+	initialize_css(){
+		this.View.stylesheet("/simple/css/base.css");
+		this.View.stylesheet("/modules/Lew42/lew42.css");
+	}
+
+	prerender(){
+		this.render_head();
+
+		// this.body.append(this.content.bind(this));
+		// this.body.append(body => this.content()); // captured, equivalent to:
+		// this.body.append(function(body){
+		// 	this.content(); // wrapped in a function, captured
+		// });
+		// this.body.append(this.content()); // only appends the returned value...
+
+		// this.body.append_as("lew42", {
+			// prefixes everything with lew42-
+		// });
+
+		this.body.append({
+			header: el("header", this.header.bind(this, this)).addClass("lew42-header"),
+			main: el("main").addClass("lew42-main"),
+				// addClass(content), and sets up lew42.body.content
+			footer: el("footer", this.footer.bind(this, this)).addClass("lew42-footer")
+		});
 	}
 
 	render(){
-		this.head();
-
-		this.body.append(this.content.bind(this));
-		this.body.append(body => this.content()); // captured, equivalent to:
-		this.body.append(function(body){
-			this.content(); // wrapped in a function, captured
-		});
-		this.body.append(this.content()); // only appends the returned value...
-
-		this.body.append({
-			content: this.content.bind(this, this),
-				// addClass(content), and sets up lew42.body.content
-		})
+		this.content && this.body.main.append(this.content.bind(this, this));
 	}
 
-	content(lew42, view){}
+	render_head(){
+		// this.head.append(el("title", this.page.title))
+		this.head.append(el("meta").attr("name", "viewport").attr("content", "width=device-width"));
+	}
 
-	View: View, // error, can't do this
+	render_body(){
+		this.body.append
+	}
+
+	header(lew42, view){
+		div("logo").addClass("lew42-logo");
+		el("nav", {
+			one: "one",
+			two: "two",
+			three: "three"
+		}).addClass("lew42-nav");
+	}
+
+	container(lew42, view){}
+
+	footer(lew42, view){
+		return "footer";
+	}
+
+	responsive(){
+		responsive(this.body, this.html);
+	}
 }
 
 Lew42.prototype.assign({
-	View, el, div, etc,
-	Post, Page, etc..?
+	// Post, Page, etc..?
 })
 
 

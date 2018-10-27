@@ -79,6 +79,12 @@ Can we promote all references all the way to the nearest... Component?
 
 site.body.append({
 	header: () => this.header(),
+	header: {
+		nav: div()
+	}, // or
+	header: div(".extra", {
+		nav: ...
+	})
 })
 
 this.header(){
