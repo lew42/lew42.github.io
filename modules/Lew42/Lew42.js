@@ -22,24 +22,13 @@ View.prototype.test1 = function(){
 
 export default class Lew42 extends Site {
 
-	initialize(){
-		this.initialize_site();
-		this.initialize_lew42();
-		this.prerender();
-		this.render();
-	}
+	// initialize_css(){
+	// 	super.initialize_css();
+	// 	this.stylesheet("/modules/Lew42/lew42.css");
+	// }
 
-	initialize_css(){
-		this.View.stylesheet("/simple/css/base.css");
-		this.View.stylesheet("/modules/Lew42/lew42.css");
-	}
-
-	initialize_lew42(){
-		this.responsive();
-	}
-
-	prerender(){
-		this.render_head();
+	// prerender(){
+	// 	this.render_head();
 
 		// this.body.append(this.content.bind(this));
 		// this.body.append(body => this.content()); // captured, equivalent to:
@@ -52,19 +41,19 @@ export default class Lew42 extends Site {
 			// prefixes everything with lew42-
 		// });
 
-		this.body.append({
-			header: el("header", this.header.bind(this, this)).addClass("lew42-header"),
-			main: el("main").addClass("lew42-main"),
-				// addClass(content), and sets up lew42.body.content
-			footer: el("footer", this.footer.bind(this, this)).addClass("lew42-footer")
-		});
+	// 	this.body.append({
+	// 		header: el("header", this.header.bind(this, this)).addClass("lew42-header"),
+	// 		main: el("main").addClass("lew42-main"),
+	// 			// addClass(content), and sets up lew42.body.content
+	// 		footer: el("footer", this.footer.bind(this, this)).addClass("lew42-footer")
+	// 	});
 
-		View.set_captor(this.body.main);
-	}
+	// 	View.set_captor(this.body.main);
+	// }
 
-	render(){
-		this.content && this.body.main.append(this.content.bind(this, this));
-	}
+	// render(){
+	// 	this.content && this.body.main.append(this.content.bind(this, this));
+	// }
 
 	render_head(){
 		// this.head.append(el("title", this.page.title))
@@ -88,10 +77,6 @@ export default class Lew42 extends Site {
 
 	footer(lew42, view){
 		return "footer";
-	}
-
-	responsive(){
-		responsive(this.body, this.html);
 	}
 }
 

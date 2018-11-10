@@ -12,7 +12,9 @@ View.stylesheet("/modules/responsive/responsive.css");
 // 		});
 // });
 
-export default async function(body, view){
+export default async function(site){
+	const body = site.body;
+	const view = site.html;
 	// console.error("init");
 	window.addEventListener("resize", () => {
 		// console.log("resize");
