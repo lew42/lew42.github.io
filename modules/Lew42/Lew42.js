@@ -1,12 +1,41 @@
-import Site, { el, div } from "/simple/Site/Site.js";
+import Site, { View as _View } from "/simple/Site/Site.js";
 import responsive from "/modules/responsive/responsive.js";
 
+class View extends _View {
+	bg(css){
+		this.css("background", css);
+		return this;
+	}
+
+	color(css){
+		this.css("color", css);
+		return this;
+	}
+}
+
+export const { el, div, h1, h2, h3, p } = View.elements();
+
+View.prototype.test1 = function(){
+	this.append(h1().filler("3-7w")).filler("2-5p");
+	return this;
+};
 
 export default class Lew42 extends Site {
+
+	initialize(){
+		this.initialize_site();
+		this.initialize_lew42();
+		this.prerender();
+		this.render();
+	}
 
 	initialize_css(){
 		this.View.stylesheet("/simple/css/base.css");
 		this.View.stylesheet("/modules/Lew42/lew42.css");
+	}
+
+	initialize_lew42(){
+		this.responsive();
 	}
 
 	prerender(){
@@ -29,6 +58,8 @@ export default class Lew42 extends Site {
 				// addClass(content), and sets up lew42.body.content
 			footer: el("footer", this.footer.bind(this, this)).addClass("lew42-footer")
 		});
+
+		View.set_captor(this.body.main);
 	}
 
 	render(){
@@ -68,7 +99,9 @@ Lew42.prototype.assign({
 	// Post, Page, etc..?
 })
 
-
+export * from "/simple/Site/Site.js";
+// export const { el, div, p, h1, h2, h3 } = View.elements();
+export { View };
 /*
 
 
