@@ -1,16 +1,38 @@
-const socket = new WebSocket("ws://" + window.location.host);
+import Storage from "../Storage/Storage.js";
 
-socket.addEventListener("open", function(){
-	console.log("%cdev socket connected", "color: green; font-weight: bold;");
-	socket.send("connection!");
-});
 
-socket.addEventListener("message", function(e){
-	if (e.data === "reload"){
-		window.location.reload();
-	} else {
-		console.log("message from server:", e.data);
+export default class Dev {
+
+	constructor(){
+		this.storage = new Storage("dev");
+
+		if (this.storage.get("livereload"))
+			this.connect();
 	}
-});
 
-export default socket;
+	connect(){
+		this.socket = new WebSocket("ws://" + window.location.host);
+
+		this.socket.addEventListener("open", () => {
+			console.log("%csimple.dev.socket connected", "color: green; font-weight: bold;");
+			this.socket.send("connection!");
+		});
+
+		this.socket.addEventListener("message", function(e){
+			if (e.data === "reload"){
+				window.location.reload();
+			} else {
+				console.log("message from server:", e.data);
+			}
+		});
+
+		this.storage.set("livereload", true);
+
+		return this.socket;
+	}
+
+	reset(){
+		this.storage.set("livereload", false);
+		window.location.reload();
+	}
+}

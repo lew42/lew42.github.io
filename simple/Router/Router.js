@@ -2,52 +2,88 @@ import is from "/simple/is/is.js";
 
 export default class Router {
 	constructor(){
+		return this.instantiate(...arguments);
+	}
+
+	instantiate(){
 		this.assign(...arguments);
 
 		this.routes = {};
 
-		if (!this.parent){
-			this.initialize_router();
-		} else if (this.auto_init){
-			this.initialize();
-		}
+		this.ref && this.ref(this);
 
-		this.init(this);
+		if (!this.parent)
+			this.instantiate_router();
+		else
+			this.instantiate_route();
 	}
-
-	init(){}
 	
-	initialize_router(){
+	instantiate_router(){
 		this.router = this;
 		this.name = this.name || "router";
 
 		// break the /#/hash/hash-parts/ into ["hash", "hash_parts"]
-		this.hash = window.location.hash && window.location.hash.slice(2, -1).replace(/-/g, "_").split("/");
+		this.hash = window.location.hash && window.location.hash.slice(2, -1).replace(/-/g, "_").split("/") || [];
 		
+		this.initialize_router();
+
+		// console.log(this.hash);
 		// activate without push
+		// this.active_route = this;
+		// this.activate(false);
+		// setTimeout(() => this.activate(false), 0);
+	}
+
+	instantiate_route(){
+		this.initialize_route();
+	}
+
+	initialize_router(){
+		this.initialize();
 		this.activate(false);
 	}
 
-	initialize(){
-		if (this.parent.hash && this.parent.hash.length)
-			this.match();
-		else
-			this.nohash();
+	initialize_route(){
+		this.initialize();
+		this.match();
 	}
 
-	nohash(){}
+	initialize(){}
 
 	match(){
-		if (this.is_match()){
-			this.hash = this.parent.hash.slice(1);
-			this.activate(false);
+		if (this.has_hash()){
+			if (this.is_match()){
+				this.hash = this.parent.hash.slice(1);
+				this.hash_match();
+			} else {
+				this.hash_no_match();
+			}
+		} else {
+			this.no_hash();
 		}
+	}
+
+	has_hash(){
+		return this.parent.hash && this.parent.hash.length;
 	}
 
 	is_match(){
 		return this.parent.is_active_route() && this.name === this.parent.hash[0];
 	}
 
+	hash_match(){
+		this.activate(false);
+	}
+
+	hash_no_match(){
+		this.no_match();
+	}
+
+	no_hash(){
+		this.no_match();
+	}
+
+	no_match(){}
 
 	activate(push = true){
 		console.log("activate", this.name);
@@ -132,7 +168,7 @@ export default class Router {
 
 	add_route(name, props){
 		const route = new this.constructor({
-			name, parent: this, router: this.router, auto_init: true
+			name, parent: this, router: this.router
 		}, props);
 
 		if (this.routes[name]) console.warn("route override?");

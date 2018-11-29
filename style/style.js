@@ -6,7 +6,7 @@ simple.stylesheet("/style/styleguide.css");
 const router = new Router();
 
 router.add("layout", {
-	activate: 
+	// activate: 
 })
 
 div.c("sections", 

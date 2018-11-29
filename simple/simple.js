@@ -1,6 +1,5 @@
-import View, { el, div, p, h1, h2, h3 } from "./view/View.js";
+import Site from "./Site/Site.js";
 
-export default {
-	el, div, p, h1, h2, h3, View
-};
-export { el, div, p, h1, h2, h3, View };
+export default new Site({ /* config */ });
+
+export * from "./Site/Site.js";

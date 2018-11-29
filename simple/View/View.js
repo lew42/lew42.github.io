@@ -354,31 +354,106 @@ export default class View {
 			return new this({ content: value }, ...args);
 		}
 	}
+
+	static elements(){
+		const View = this;
+		const fns = {
+			el(tag, ...args){
+				return new View({ tag }).append(...args);
+			},
+			div(){
+				return new View().append(...arguments);
+			}
+		};
+
+		fns.el.c = function(tag, classes, ...args){
+			return new View({ tag }).addClass(classes).append(...args);
+		};
+
+		fns.div.c = function(classes, ...args){
+			return new View().addClass(classes).append(...args);
+		};
+
+		["p", "h1", "h2", "h3"].forEach(tag => {
+			fns[tag] = function(){
+				return new View({ tag }).append(...arguments);
+			};
+
+			fns[tag].c = function(classes, ...args){
+				return new View({ tag }).addClass(classes).append(...args);
+			};
+		})
+
+		return fns;
+	}
 }
 
-export function el(tag, ...args){
-	return new View({ tag }).append(...args);
-}
+// View.elements = {
+// 	el(tag, ...args){
+// 		return new View({ tag }).append(...args);
+// 	},
+// 	div(){
+// 		return new View().append(...arguments);
+// 	}
+// };
 
-export function div(){
-	return new View().append(...arguments);
-}
+// View.elements.el.c = function(tag, classes, ...args){
+// 	return new View({ tag }).addClass(classes).append(...args);
+// }
 
-export function p(){
-	return el("p", ...arguments);
-}
+// View.elements.div.c = function(classes, ...args){
+// 	return new View().addClass(classes).append(...args);
+// }
 
-export function h1(){
-	return el("h1", ...arguments);
-}
+// View.classy = {
+// 	el(tag, classes, ...args){
+// 		return new View({ tag }).addClass(classes).append(...args);
+// 	},
+// 	div(classes, ...args){
+// 		return new View().addClass(classes).append(...args);
+// 	}
+// };
 
-export function h2(){
-	return el("h2", ...arguments);
-}
+// View.smarty = {
+// 	el(token, ...args){},
+// 	div(token, ...args){
+// 		if (token[0] === "."){
+// 			return new View().addClass(token.slice(1)).append(...args);
+// 		} else {
+// 			return new View().append(...arguments); // append all args
+// 		}
+// 	}
+// };
 
-export function h3(){
-	return el("h3", ...arguments);
+/*
+div("hello world")
+div(".hello", "world")
+div(".hell.o", "world")
+div(".hell o", "world")
+
+if it's not part of the append_obj system, you could grab the first class as a property, and auto-reference...
+
+content(){
+	div(".one", "one"); // appends to parent, but also assigns to prop .one?
 }
+*/
+
+// ["p", "h1", "h2", "h3"].forEach(tag => {
+// 	View.elements[tag] = function(){
+// 		return new View({ tag }).append(...arguments);
+// 	};
+
+// 	View.elements[tag].c = function(classes, ...args){
+// 		return new View({ tag }).addClass(classes).append(...args);
+// 	}
+
+// 	View.classy[tag] = function(classes, ...args){
+// 		return new View({ tag }).addClass(classes).append(...args);
+// 	};
+// })
+
+export const { el, div, p, h1, h2, h3 } = View.elements();
+export { View };
 
 View.previous_captors = [];
 View.prototype.filler = filler;
@@ -393,11 +468,3 @@ View.prototype.capturable = true;
 // 		});
 // 	}
 // });
-
-View.body = new View({
-	el: document.body,
-	capturable: false
-});
-
-View.app = new View().addClass("default app").appendTo(document.body);
-View.set_captor(View.app);
