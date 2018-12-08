@@ -1,3 +1,12 @@
+Could the .log() and .log.methods() double as a plugin system?
+Yes, duh...
+
+Well, the logger could just be pluggable, in dev mode.
+You could have the same pattern for prod..
+this.trigger("name.sub", ...args);
+
+
+
 # Requirements
 
 - Add log statements, and toggle them easily (without having to rewrite code)

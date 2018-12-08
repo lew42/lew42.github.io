@@ -1,38 +1,89 @@
 body {background: hsla(0, 0%, 27%, 1);padding-top: 3em;}
 
-.route {
-	--padding: 4px 8px 4px;
-	padding: var(--padding);
+.item {
+	--padding: 6px 10px 6px;
+	--background: #eee;
+	/* padding: var(--padding); */
 	max-width: 40em;
 	margin: 0 auto;
 	cursor:  pointer;
 	font-family: verdana;
 	font-size: 12px;
-	margin-bottom: 3px;
+	border-bottom: 1px solid rgba(0,0,0,0.1);
+	/* background: #eee; */
 }
 
-.route.active {/* background: hsla(0, 0%, 96%, 1); */}
+.items_mw42 .item {
+	max-width: 40em;
+}
 
-.route:not(.active) > .content { display: none; }
+.items_pad1 .item {
+	--padding: 6px 10px;
+}
 
-.route.wrap {padding: 0;}
+.items_bg1 .item {
+	--background: #eee;
+}
 
-.route > .preview { padding: var(--padding); margin-bottom: 2px; }
+.item-theme-1 .item {
+	padding: 0.4em 0.8em;
+}
 
-.route:not(.wrap), .route > .preview {
+
+/*
+Instead of switching css classes for every css property+value (lots of combinations)...
+
+Can we just use JavaScript to edit the CSS variables?
+
+But we need dynamic CSS rules when we want to branch...
+
+New theme --> create a new wrapper or individual class:
+- add in css *variables*, not properties
+- this way, when we go to edit with chrome, it will persist automatically
+
+also, changing the variables isn't technically an override?
+
+
+Hmm... why use variables?  If it's all dynamic, just use standard props?
+
+Well, variables let you reuse base values... CSS sort of lets you do this, but not as well..?
+
+One example is the "extend" process: .other-selector, .include-me { ... }
+
+That's incredibly hard to read/understand, and now you have styles in 2 locations, and they're coupled to another style set (takes some copy+paste to break them out).
+
+
+
+*/
+
+.t1 .item {
+	max-width: 40em;
+}
+
+.pad.item, .item > .preview {background: var(--background);padding: var(--padding);}
+
+.item:last-child { border-bottom: none; }
+
+.item.active {/* background: hsla(0, 0%, 96%, 1); */ }
+
+.item:not(.active) > .content { display: none; }
+
+.item.wrap {padding: 0;}
+
+.item > .preview {/* margin-bottom: 2px; */}
+
+/*.item:not(.wrap), .item > .preview {
 	background: hsla(0, 0%, 80%, 1);
-	}
+	}*/
 
-.route.active:not(.wrap), .route.active > .preview {
+.item.active > .preview {
 	background: hsla(0, 0%, 90%, 1);
 	/* color: #ddd; */
 }
 
-.route.active-route:not(.wrap), .route.active-route > .preview {
+.item.active-route > .preview {
 	background: hsl(178, 100%, 91%);
 	/* color: #ddd; */
 }
 
-.route > .content { padding-left: 8px; }
-
-.route > .content > .route { margin-bottom: 0; }
+.item > .content {padding-left: 8px; background: var(--background);}

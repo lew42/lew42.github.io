@@ -25,3 +25,7 @@ This differs for complete switching vs menus.  I suppose the CSS can dictate the
 
 # Animation?
 The sequential activation/deactivation was pretty slick.  Maybe I can find that code... 
+
+
+# Render 2 (and keep them synchronized?)
+This is just a matter of calling the render function(s) again (prerender, render, etc)

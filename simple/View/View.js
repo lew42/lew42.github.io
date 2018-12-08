@@ -9,8 +9,8 @@ export default class View {
 	instantiate(...args){
 		this.assign(...args);
 		this.prerender();
-		this.render();
 		this.initialize();
+		this.render();
 	}
 
 	render(){

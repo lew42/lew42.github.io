@@ -3,7 +3,7 @@ import View from "../View/View.js";
 import Dev from "../Dev/Dev.js";
 import Router from "../Router/Router.js";
 
-console.log("Site.js");
+// console.log("Site.js");
 
 export default class Site {
 	constructor(){

@@ -8,3 +8,6 @@ body {
 }
 
 * { box-sizing: border-box; }
+
+.cols { display: flex; }
+.cols > * { flex: 1 1 0; }

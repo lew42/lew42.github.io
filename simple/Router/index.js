@@ -7,9 +7,9 @@ import Router from "./Router.js";
 // route("two");
 
 class Router1 extends Router {
-	initialize(){
-		this.view = div.c("route", this.name + "-" + this.level()).click(() => this.activate());
-	}
+	// initialize(){
+	// 	this.view = div.c("route", this.name + "-" + this.level()).click(() => this.activate());
+	// }
 }
 
 const router1 = new Router1({
@@ -26,10 +26,6 @@ router1.add("two").add({
 router1.add("three");
 router1.add("twoA");
 router1.add("test");
-
-window.addEventListener("hashchange", function(){
-	console.log(...arguments);
-})
 
 el("a", "test link").attr("href", "#/test/");
 /*
