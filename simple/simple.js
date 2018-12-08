@@ -1,5 +1,6 @@
 import Site from "./Site/Site.js";
 
-export default new Site({ /* config */ });
-
+const site = window.simple = new Site({ /* config */ });
+export default site;
+export const route = site.route.bind(site);
 export * from "./Site/Site.js";

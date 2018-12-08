@@ -1,29 +1,63 @@
 import is from "/simple/is/is.js";
+import View, { el, div } from "/simple/View/View.js";
+
+console.log("Router.js");
+
 
 export default class Router {
+	static route(){
+		const route = Router.captor.route(...arguments);
+		// route.render();
+		return route;
+	}
+
+	static set_captor(route){
+		Router.previous_captors = Router.previous_captors || [];
+		Router.previous_captors.push(Router.captor);
+		Router.captor = route;
+	}
+
+	static restore_captor(){
+		View.captor = View.previous_captors.pop();
+	}
+
 	constructor(){
 		return this.instantiate(...arguments);
 	}
 
 	instantiate(){
+		// this.log = true;
 		this.assign(...arguments);
 
 		this.routes = {};
+		this.views = [];
 
-		this.ref && this.ref(this);
+		this.self && this.self(this);
 
 		if (!this.parent)
 			this.instantiate_router();
 		else
 			this.instantiate_route();
 	}
-	
-	instantiate_router(){
-		this.router = this;
-		this.name = this.name || "router";
 
+	initialize_window_hash(){
 		// break the /#/hash/hash-parts/ into ["hash", "hash_parts"]
 		this.hash = window.location.hash && window.location.hash.slice(2, -1).replace(/-/g, "_").split("/") || [];
+	}
+	
+	instantiate_router(){
+		is.undef(this.log) && (this.log = true);
+		this.router = this;
+		this.name = this.name || (this.constructor.name[0].toLowerCase() + this.constructor.name.substring(1));
+
+		this.initialize_window_hash();
+
+		window.addEventListener("hashchange", () => {
+			console.group(this.path(), "hashchange");
+			this.initialize_window_hash();
+			this.each(route => route.rematch())
+			console.groupEnd();
+		});
 		
 		this.initialize_router();
 
@@ -35,7 +69,12 @@ export default class Router {
 	}
 
 	instantiate_route(){
+		// this.initialize_route_hash();
 		this.initialize_route();
+	}
+
+	initialize_route_hash(){
+		// this.hash = 
 	}
 
 	initialize_router(){
@@ -48,18 +87,46 @@ export default class Router {
 		this.match();
 	}
 
-	initialize(){}
+	initialize(){
+		this.prerender();
+	}
 
+	prerender(){
+		this.view = div.c("route", {
+			preview: div(this.name).click(() => this.activate())
+		});
+
+		this.views.push(this.view);
+		this.classify();
+	}
+
+	// this is an odd handoff of the hash...
+	// we should probably setup the child route's hash in instantiate...
 	match(){
+		// this.log && console.group(this.path(), ".match()");
 		if (this.has_hash()){
 			if (this.is_match()){
 				this.hash = this.parent.hash.slice(1);
+				this.log = true;
 				this.hash_match();
+				// this.log && console.groupEnd();
+				return true;
 			} else {
 				this.hash_no_match();
 			}
 		} else {
 			this.no_hash();
+		}
+
+		// this.log && console.groupEnd();
+		return false; // used to break the rematch loop
+	}
+
+	rematch(){
+		if (this.match()){ // self is a match
+			this.each(route => route.rematch());
+
+			return true; // regardless of child match, return true to halt parent loop
 		}
 	}
 
@@ -68,37 +135,94 @@ export default class Router {
 	}
 
 	is_match(){
-		return this.parent.is_active_route() && this.name === this.parent.hash[0];
+		// console.log("this.parent.is_active_route()", this.parent.is_active_route(), this.name === this.parent.hash[0],  "why does this matter?");
+
+		if ( (this.name === this.parent.hash[0]) && 
+			(!this.parent.is_active_route()) ) console.error("mismatch");
+
+			// this happens when a hashchange happens, and we're jumping from one hash to another, and do a rematch
+
+		// return this.parent.is_active_route() && this.name === this.parent.hash[0];
+		return this.name === this.parent.hash[0];
+
+		// if i remove the is_active_route part, it breaks...
+		// but it's not really working right now
 	}
 
 	hash_match(){
+		this.log && console.group(this.path(), ".hash_match()");
 		this.activate(false);
+		this.log && console.groupEnd();
 	}
 
 	hash_no_match(){
+		this.log && console.group(this.path(), ".hash_no_match()");
 		this.no_match();
+		this.log && console.groupEnd();
 	}
 
 	no_hash(){
+		this.log && console.group(this.path(), ".no_hash()");
 		this.no_match();
+		this.log && console.groupEnd();
 	}
 
-	no_match(){}
+	no_match(){
+		this.log && console.log(this.path(), ".no_match()");
+	}
 
 	activate(push = true){
-		console.log("activate", this.name);
+		this.log && console.group(this.path(), ".activate(push == " + push + ")");
 		this.activate_route(push);
-		this.activated();
+		this.log && console.groupEnd();
 	}
-
-	activated(){}
 
 	activate_route(push = true){
-		this.router.active_route && this.router.active_route.deactivate();
-		this.router.active_route = this;
-		push && this.push();
+		if (this.router.active_route === this){
+			this.reactivate();
+		} else {
+			// console.log("activate", this.path());
+			if (this.router.active_route && this.deactivate_active_route){
+				this.router.active_route.deactivate();
+			}
+
+			this.router.active_route = this;
+			push && this.push();
+			this.activated();
+		}
 	}
 
+	activated(){
+		this.log && console.group(this.path(), "activated()");
+		
+		this.render();
+		this.log && console.groupEnd();
+	}
+
+	render(){
+		if (!this.rendered){
+			this.classify(); // 1
+				this.view.append({
+					content: () => this.content() // 2
+				});
+
+				// ! Found it:  We must run the content function AFTER classification, because otherwise the classification is void.
+			this.rendered = true;
+		} else {
+			this.classify();
+		}
+		return this.view;
+	}
+
+	content(){
+		this.make(3);
+	}
+
+
+	reactivate(){
+		this.log && console.log(this.path(),  "reactivate()");
+		// this.activated();
+	}
 
 	is_active(){
 		return this.is_active_route() || this.is_active_ancestor();
@@ -140,12 +264,20 @@ export default class Router {
 	}
 
 	deactivate(){
+		this.log && console.group(this.path(), "deactivate()");
+		// what if this is called manually?  route.deactivate()?  activate parent?
 		this.deactivate_route();
 		this.deactivated();
+		this.log && console.groupEnd();
 	}
 
-	deactivate_route(){}
-	deactivated(){}
+	deactivate_route(){
+		// console.log("deactivate", this.path());
+	}
+
+	deactivated(){
+		this.classify(false);
+	}
 
 	push(){
 		if (this === this.router){
@@ -161,12 +293,22 @@ export default class Router {
 			for (const n in name){
 				this.add_route(n, name[n]);
 			}
-		} else {
+		} else if (is.pojo(props)) {
 			 return this.add_route(name, props);
+		} else if (props) {
+			return this.add_route(name, { activated: props });
+		} else {
+			return this.add_route(name);
 		}
 	}
 
+	// just an alias for .add()
+	route(){
+		return this.add(...arguments);
+	}
+
 	add_route(name, props){
+		console.groupCollapsed(this.path(), ".add_route(", name, ")");
 		const route = new this.constructor({
 			name, parent: this, router: this.router
 		}, props);
@@ -176,8 +318,18 @@ export default class Router {
 		
 		if (!this[name]) this[name] = route;
 		else console.warn("prop", name, "taken");
-		
+		console.groupEnd();
 		return route;
+	}
+
+	// /#/one/two/three/
+	level(){
+		var count = 0, route = this;
+		while (route !== this.router){
+			count++;
+			route = route.parent;
+		}
+		return count;
 	}
 
 	part(){
@@ -202,15 +354,66 @@ export default class Router {
 
 	make(n){
 		for (let i = 1; i < n+1; i++){
-			this.add("test"+i, function(){
-				console.log("activated " + this.path());
-			}, function(){
-				console.log("deactivated "+ this.path());
-			});
+			this.add("test"+i);
 		}
 	}
 
 	assign(){
 		return Object.assign(this, ...arguments);
 	}
+
+	// return value is extremely important
+	// don't accidentally use a quick arrow fn: this.each(route => route.something()) and kill the loop because the method returns something...
+	// you'd have to use a function(){} or just break to a new line, so it means something completely different..
+	each(fn){
+		var ret;
+		for (const name in this.routes){
+			ret = fn.call(this, this.routes[name]);
+			if (is.def(ret)) // any defined return value breaks the loop and returns that value
+				return ret;
+		}
+	}
+
+	classify(add = true){
+		this.log && console.group(this.path(), (add === false ? "de" : "") + "classify(" + add + ")");
+
+		for (const view of this.views){
+			view[add ? "addClass" : "removeClass"]("active active-route");
+		}
+
+		var parent = this.parent;
+
+		if (parent)
+			parent.classify_as_active_parent(add);
+
+		while (parent){
+			parent.classify_as_active_ancestor(add);
+			parent = parent.parent;
+		}
+		
+		this.log && console.groupEnd();
+	}
+
+	declassify(){
+		this.classify(false);
+	}
+
+	classify_as_active_parent(add = true){
+		this.log && console.log((add === false ? "de" : "") + "classify_as_active_parent", this.path());
+		for (const view of this.views){
+			view[add ? "addClass" : "removeClass"]("active-parent");
+		}
+	}
+
+	classify_as_active_ancestor(add = true){
+		this.log && console.log((add === false ? "de" : "") + "classify_as_active_ancestor", this.path());
+		for (const view of this.views){
+			view[add ? "addClass" : "removeClass"]("active active-ancestor");
+		}
+	}
 }
+
+Router.router = new Router({
+	log: false
+}); // root/default router
+Router.set_captor(Router.router);

@@ -1,6 +1,9 @@
 import is from "../is/is.js";
 import View from "../View/View.js";
 import Dev from "../Dev/Dev.js";
+import Router from "../Router/Router.js";
+
+console.log("Site.js");
 
 export default class Site {
 	constructor(){
@@ -18,6 +21,7 @@ export default class Site {
 		this.initialize_css();
 		this.initialize_body();
 		this.initialize_dev();
+		this.initialize_router();
 
 		this.prerender();
 	}
@@ -56,6 +60,14 @@ export default class Site {
 		this.dev = new this.Dev();
 	}
 
+	initialize_router(){
+		this.router = this.Router.router;
+	}
+
+	route(){
+		return this.Router.route(...arguments);
+	}
+
 	prerender(){
 		this.View.set_captor(this.body);
 	}
@@ -84,20 +96,12 @@ export default class Site {
 	}
 }
 
-Site.prototype.assign(
-	View.elements,
-	{	
-		is,
-		View,
-		Dev
-	}
-);
+Site.prototype.assign(View.elements, {	
+	is,
+	View,
+	Dev,
+	Router
+});
 
 export * from "../View/View.js";
-export { is, Dev };
-
-/*
-It's useful to only import what you NEED/USE, and remove things that you don't use/need.
-
-These pass-through exports are fine down here, because they're different - they're not depended upon.
-*/
+export { is, Dev, Router };

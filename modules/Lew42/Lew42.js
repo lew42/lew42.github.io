@@ -22,6 +22,25 @@ View.prototype.test1 = function(){
 
 export default class Lew42 extends Site {
 
+	// constructor(){
+	// 	this.instantiate(...arguments);
+	// }
+
+	// instantiate(){
+	// 	this.assign(...arguments);
+	// 	this.initialize();
+	// }
+
+	// initialize(){
+	// 	this.initialize_html();
+	// 	this.initialize_head();
+	// 	this.initialize_css();
+	// 	this.initialize_body();
+	// 	this.initialize_dev();
+
+	// 	this.prerender();
+	// }
+
 	// initialize_css(){
 	// 	super.initialize_css();
 	// 	this.stylesheet("/modules/Lew42/lew42.css");

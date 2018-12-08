@@ -8,13 +8,16 @@ export default class View {
 
 	instantiate(...args){
 		this.assign(...args);
+		this.prerender();
+		this.render();
 		this.initialize();
 	}
 
-	initialize(){
-		this.prerender();
-		this.render();
+	render(){
+		this.content && this.append(this.content);
 	}
+
+	initialize(){}
 
 	prerender(){
 		this.el = this.el || document.createElement(this.tag || "div");
@@ -34,10 +37,6 @@ export default class View {
 
 		if (this.name)
 			this.addClass(this.name);
-	}
-
-	render(){
-		this.content && this.append(this.content);
 	}
 
 	append(...args){
@@ -169,6 +168,7 @@ export default class View {
 	}
 
 	click(cb){
+		if (!cb) console.error("must provide a callback");
 		return this.on("click", cb);
 	}
 
@@ -215,6 +215,11 @@ export default class View {
 
 	styles(){
 		return getComputedStyle(this.el);
+	}
+
+	// this is more consistent with jQuery and this.el.style{}
+	style(){
+		return this.css(...arguments);
 	}
 
 	// inline styles

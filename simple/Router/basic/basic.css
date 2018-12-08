@@ -1,0 +1,38 @@
+body {background: hsla(0, 0%, 70%, 1);padding-top: 3em;}
+
+.item {
+	--padding: 4px 8px 4px;
+	padding: var(--padding);
+	max-width: 40em;
+	margin: 0 auto;
+	cursor:  pointer;
+	font-family: verdana;
+	font-size: 12px;
+	margin-bottom: 3px;
+}
+
+.item.active {/* background: hsla(0, 0%, 96%, 1); */}
+
+.item:not(.active) > .content { display: none; }
+
+.item.wrap {padding: 0;}
+
+.item > .preview { padding: var(--padding); margin-bottom: 2px; }
+
+.item:not(.wrap), .item > .preview {
+	background: hsla(0, 0%, 80%, 1);
+	}
+
+.item.active:not(.wrap), .item.active > .preview {
+	background: hsla(0, 0%, 90%, 1);
+	/* color: #ddd; */
+}
+
+.item.active-item:not(.wrap), .item.active-item > .preview {
+	background: hsl(178, 100%, 91%);
+	/* color: #ddd; */
+}
+
+.item > .content { padding-left: 8px; }
+
+.item > .content > .item { margin-bottom: 0; }

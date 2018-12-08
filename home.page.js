@@ -1,5 +1,137 @@
 import lew42, { el, div, h1 } from "/lew42.js";
 
+/*
+
+Is a "tab" a set of {tabbie + page/content}, or does "tab" mean the little tabbie?
+
+I think name-->label is a good one.  We can use the .name property religiously, and get it from a smart add (.add({ name: {props} });)
+
+Then we don't usually need to worry about the tabbie, unless we want to.
+
+So... a group of "tabs" is just an arbitrary set of related views that have related switching behavior (either mutually exclusive, or mutually allowable).
+
+So, in a sense, all we need is to add these .views[] to the .route ?
+But, we need a way to... deactivate the current one?  done.
+
+route.deactivate --> for each .views[], view.deactivate() ?
+	no, some .views are buttons...
+
+route.deactivate --> for each .views[], view.declassify()...
+	unless there's a .deactivate method, that's a pretty simple setup
+
+
+How do we get from Router to RouterView or Tabs?
+
+Maybe the router should just default to view functionality?
+Instead of router.add("route", { activated(), deactivated() }), we just do
+router.add("route", <viewable>)
+
+1.  if name is pojo --> iterate
+2.  if props is viewable --> add to .views[]
+3.  if props is pojo --> use as props
+
+limitations:  you can't use a pojo as a viewable, in this situation, but you can just wrap it in a div if that's what you want...
+
+So, how does it work?
+
+route.add("name", fn(){}) --> viewable?
+
+Why not just manually upgrade like this:
+
+route.add("name", div(fn(){
+	// now it becomes clear that this is a view...
+}));
+
+Is that all we need?
+
+How do you structure the buttons/pages in separate columns?
+
+router.add("name", rt => {
+	div("btn name").click(() => rt.activate());
+
+
+});
+
+But, we really need to iterate through the routes in separate locations?
+
+div.c("left", () => {
+	for (const rt of router.routes){
+		div("btn", rt.name).click(rt.activate);
+	}
+});
+
+div.c("pages", () => {
+	for (const rt of router.routes){
+		div.c("page", rt.content?);
+	}
+});
+
+tab.name
+tab.content
+
+router.routes
+
+route.render()
+	this.view = div(this.content);
+
+*/
+
+class Tabs extends lew42.View {
+	// initialize(){
+	// 	this.prerender();
+	// 	this.render();
+	// }
+
+	// render(){
+	// 	this.content && this.append(this.content);
+	// }
+
+	render(){
+
+	}
+
+	// or render_tab() ?
+	// or .tab.render() ?
+	tab(){
+
+	}
+
+	add(name, props){
+		if (is.pojo(name)){
+			for (const n in name){
+				this.add_tab(n, name[n]);
+			}
+		} else {
+			 return this.add_tab(name, props);
+		}
+	}
+
+	add_tab(name, props){
+
+	}
+}
+
+new Tabs().append("my tabs!");
+
+/*
+
+tabs.add({
+	tab_name: "tab content",
+	tab_name: {
+		tab: "tab-label",
+		content: "str",
+		content(){}
+	}
+})
+
+*/
+
+lew42.router.add("test1", {
+	activated(){
+
+	}
+})
+
 // div("hello world");
 
 div.c("r-cols",

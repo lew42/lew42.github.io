@@ -1,0 +1,38 @@
+body {background: hsla(0, 0%, 27%, 1);padding-top: 3em;}
+
+.route {
+	--padding: 4px 8px 4px;
+	padding: var(--padding);
+	max-width: 40em;
+	margin: 0 auto;
+	cursor:  pointer;
+	font-family: verdana;
+	font-size: 12px;
+	margin-bottom: 3px;
+}
+
+.route.active {/* background: hsla(0, 0%, 96%, 1); */}
+
+.route:not(.active) > .content { display: none; }
+
+.route.wrap {padding: 0;}
+
+.route > .preview { padding: var(--padding); margin-bottom: 2px; }
+
+.route:not(.wrap), .route > .preview {
+	background: hsla(0, 0%, 80%, 1);
+	}
+
+.route.active:not(.wrap), .route.active > .preview {
+	background: hsla(0, 0%, 90%, 1);
+	/* color: #ddd; */
+}
+
+.route.active-route:not(.wrap), .route.active-route > .preview {
+	background: hsl(178, 100%, 91%);
+	/* color: #ddd; */
+}
+
+.route > .content { padding-left: 8px; }
+
+.route > .content > .route { margin-bottom: 0; }

@@ -104,6 +104,9 @@ export default class Page {
 
 		return this.view;
 	}
+	// must classify after adding this.view to this.views
+	// but why do we need to classify before running the content fn?
+	// maybe its just that we need to run the content fn before appending to parent?
 
 	content(){}
 
