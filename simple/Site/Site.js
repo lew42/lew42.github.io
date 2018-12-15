@@ -41,7 +41,7 @@ export default class Site {
 	}
 
 	initialize_css(){
-		this.stylesheet("/simple/css/base.css") 
+		this.stylesheet("/simple/css/simple.css") 
 		// this might be relative to the current url,
 			// and might not work for externally loaded stuff
 				// fix:  ://lew42.com/simple/css/base.css

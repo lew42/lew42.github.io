@@ -1,4 +1,22 @@
-import lew42, { el, div, h1 } from "/lew42.js";
+import lew42, { el, div, h1, p, View, a } from "/lew42.js";
+
+lew42.body.addClass("body-1");
+
+div.c("paper bg-white", d => {
+	a("Router").href("/simple/Router/");
+	el("br");
+	a("Bells and Whistles").href("/bells-and-whistles/");
+});
+
+div.c("paper bg-light", d => {
+	el("select", el("option", "one"), el("option", "two"));
+});
+
+div.c("paper bg-white", d => {
+	el("select", el("option", "one"), el("option", "two"));
+});
+
+
 
 /*
 

@@ -1,3 +1,27 @@
+# Problems
+
+I can't import .md.  I can't write with simple.js views quickly enough to make it a viable notetaking experience.  I can, however, keep creating these markdown files, because Sublime renders them sufficiently.
+
+I need to document the various use cases for the Router...
+
+- route/r.views?
+	vs route/r.ctrls and route_ctrl.views?
+	this adds an extra layer of referencing, but it's doable.
+
+
+
+
+# TODO
+
+Current objective: Use the router to document different layout strategies.
+- If this isn't a robust, simple, grokkable solution, I don't want to invest so much time in creating content?  Forget about that.. just don't break it.
+
+This is the Test class/system.
+This is the Page class/system.
+This is a Tab class/system.
+
+I just need to clarify some of the tricky points (particularly the shortcuts).  When you use route("name", fn(){}), what are the args, what's this, etc?
+
 
 
 

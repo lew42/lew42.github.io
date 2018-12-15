@@ -2,7 +2,6 @@ import is from "/simple/is/is.js";
 
 /*
 
-This might be worthwhile at another time...
 
 
 */

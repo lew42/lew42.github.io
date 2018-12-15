@@ -1,0 +1,7 @@
+.bg-white {
+	background: white;
+}
+
+.bg-light {
+	background: hsl(0, 0%, 98%);
+}

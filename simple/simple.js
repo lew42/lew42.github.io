@@ -1,6 +1,13 @@
-import Site from "./Site/Site.js";
+import Site, { el, div } from "./Site/Site.js";
 
-const site = window.simple = new Site({ /* config */ });
-export default site;
-export const route = site.route.bind(site);
+const simple = window.simple = new Site({
+	page_1(){
+		this.body.addClass("body-1")
+		this.View.set_captor(div.c("paper bg-white"))
+	}
+});
+simple.el = el;
+simple.div = div;
+export default simple;
+export const route = simple.route.bind(simple);
 export * from "./Site/Site.js";

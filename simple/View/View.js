@@ -10,14 +10,17 @@ export default class View {
 		this.assign(...args);
 		this.prerender();
 		this.initialize();
-		this.render();
 	}
 
 	render(){
 		this.content && this.append(this.content);
 	}
 
-	initialize(){}
+	initialize(){
+		// i think this is best
+		this.render();
+		// allows before and after config
+	}
 
 	prerender(){
 		this.el = this.el || document.createElement(this.tag || "div");

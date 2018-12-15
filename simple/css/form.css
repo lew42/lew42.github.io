@@ -1,0 +1,13 @@
+select {
+	padding: 0.5em 0.75em;
+	border: none;
+	cursor: pointer;
+	/* outline: none; */
+	width: 100%;
+	box-shadow: -1px 1px 1px rgba(0,0,0,0.05);
+}
+
+.bg-white select { background: #eee; border-bottom: 1px solid #ddd; }
+.bg-light select {
+	background: #fff;
+}
