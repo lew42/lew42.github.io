@@ -392,6 +392,239 @@ class View extends Base {
 View.previous_captors = [];
 View.prototype.capture = true;
 
-export default View;
+class Smart extends Base {
+	instantiate(...args){
+		this.assign(...args);
+		// this.initialize(); // do this after?
+	}
+
+	toJSON(){
+		return this.props;
+	}
+
+
+	get(name){
+		return this.props[name];
+	}
+
+	/*
+	This is quite confusing.
+	1. A smart object needs to be set to a parent smart object.
+	2. We assume the parent smart object is already initialized with data...?
+	*/
+	set(name, value){
+		const data = this.props[name];
+		if (value instanceof Smart){
+			// do smart init?
+
+			value.saver = this.saver; // set this before .initialize(), so initialize can .set subs
+
+			if (!value.props){ // unset smart object
+				if (!is.def(data)) // no data to load
+					this.props[name] = value.props = {};  // init empty props
+					// I'm not sure if this should be saved yet?
+					// I guess the empty props would be saved, and would be reloaded...
+					// could be useful for fleshing out some sort of empty structures...?
+				else // assume the data are for real
+					value.props = data;  // doesn't need to be saved...
+
+				value.initialize();
+			} else {
+				console.warn("hmm, not sure here");
+				// we're trying to re-set a smart object...
+			}
+
+		} else {
+			// normal prop update...
+			this.props[name] = value;
+			this.save();
+		}
+
+		if (is.obj(value) || is.arr(value) || is.class(value)){
+			if (!is.def(this[name]))
+				this[name] = value;
+			else
+				console.warn("promote prop conflict");
+		}
+
+		return this; // ?
+	}
+
+	save(){
+		if (this.saver) this.saver.save();
+		else console.error("no .saver");
+		// else this.constructor.save();
+	}
+
+	static save(){
+		this.saver.save();
+	}
+
+	// get root_prop(){
+	// 	return this.props._root_prop;
+	// }
+
+	// set root_prop(value){
+	// 	this.props._root_prop = value;
+	// 	this.save();
+	// }  // no underscore needed, just map it?
+
+	log(){
+		console.log(this);
+	}
+}
+
+
+class Socket extends EventEmitter {
+	initialize(){
+		this.ws = new WebSocket("ws://" + window.location.host);
+		this.ws.addEventListener("open", () => this.open());
+		this.ws.addEventListener("message", res => this.message(res));
+
+		this.ready = new Promise((res, rej) => {
+			this._ready = res;
+		});
+	}
+	open(){
+		console.log("%cSocket connected.", "color: green; font-weight: bold;");
+		this.rpc("log", "connected!");
+		this._ready();
+	}
+	// message recieved handler
+	message(res){
+		console.log(res);
+		const data = JSON.parse(res.data);
+		data.args = data.args || [];
+		console.log(data.method + "(", ...data.args, ")");
+
+		this[data.method](...data.args);
+	}
+	reload(){
+		window.location.reload();
+	}
+
+	async send(obj){
+		// console.log("sending", obj);
+		return this.ready.then(() => {
+			this.ws.send(JSON.stringify(obj));
+		});
+	}
+
+	rpc(method, ...args){
+		this.send({ method, args })
+	}
+	ls(data){
+		console.log(data);
+	}
+}
+
+
+class Saver extends EventEmitter {
+	initialize(){
+		this.filename = this.filename || "data.json";
+		this.data = {};
+		this.ready = new Promise((res, rej) => {
+			this._ready = res;
+		});
+		this.fetch();
+	}
+	set(name, value){
+		this.data[name] = value;
+		this.save();
+	}
+	get(name){
+		return this.data[name];
+	}
+	fetch(){
+		// fetch is relative to the html file.  if we add /, we can use this code in /sub/paths/
+		fetch("/" + this.filename)
+			.then(response => {
+				if (!response.ok) {
+					throw new Error('Network response was not ok ' + response.statusText);
+				}
+				return response.json();
+			}).then(data => {
+				this.load(data);
+			}).catch(error => {
+				console.error('There was a problem with the fetch operation:', error);
+			});
+	}
+
+	load(data){
+		this.app.props = data;
+		this._ready();
+		this.emit("loaded"); // events{prop: [fn]}
+	}
+
+	save(){
+		if (!this.saving)
+			this.saving = setTimeout(this.send.bind(this), 0);
+	}
+
+	send(){
+		this.app.socket.rpc("write", this.filename, JSON.stringify(this.app.props, null, 4));
+		this.saving = false;
+	}
+}
+
+class App extends Smart {
+
+	// Smart objects normally don't need to auto init, but this does
+	instantiate(...args){
+		this.Smart = Smart;
+		this.props = {};
+		this.assign(...args);
+		this.initialize();
+	}
+
+	initialize(){
+		if (this.is_dev()){
+			this.initialize_socket();
+			this.initialize_saver();
+			this.initialize_dev_ready();
+		} else {
+			this.initialize_ready();
+		}
+		this.initialize_google_icon_font();
+		this.initialize_body();
+	}
+
+	is_dev(){
+		return window.location.hostname == "localhost";
+	}
+
+	initialize_dev_ready(){
+		this.ready = Promise.all([this.socket.ready, this.saver.ready, this.DOMready()]).then(() => this);
+	}
+
+	DOMready(){
+		return new Promise((res, rej) => {
+			document.addEventListener('DOMContentLoaded', () => res(this));
+		});
+	}
+
+	initialize_ready(){
+		this.ready = this.DOMready();
+	}
+
+	initialize_body(){
+		this.body = View.body().init();
+	}
+
+	initialize_saver(){
+		this.saver = new Saver({ app: this }, this.saver);
+	}
+
+	initialize_google_icon_font(){
+		View.stylesheet("https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0");
+	}
+
+	initialize_socket(){
+		this.socket = new Socket(this.socket); // you could pass socket: {config} to App this way...
+	}
+}
+
 export const { el, div, p, h1, h2, h3 } = View.elements();
-export { View, is, Base, EventEmitter };
+export { View, is, Base, EventEmitter, Smart, App };
+
+export const app = new App();
